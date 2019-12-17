@@ -24,24 +24,27 @@ def decode(src, dst):
     ok(f"save to > {click.format_filename(dst)}")
 
 
-def download_url(url, output_dir=None):
+def download_url(url, output_dir=None, playlist=None):
     args = ['you-get', url]
     if output_dir is not None:
-        args.push('-o')
-        args.push(output_dir)
+        args.append('-o')
+        args.append(output_dir)
+    if playlist:
+        args.append('--playlist')
     subprocess.run(args, stdout=subprocess.DEVNULL)
 
 
 @cli.command()
 @click.option('-o', '--output-dir')
+@click.option('-p', '--playlist', is_flag=True, default=False)
 @click.option('-f', '--from-file', 'file', type=click.File())
 @click.argument('urls', nargs=-1)
-def download(urls, file, output_dir):
+def download(urls, file, output_dir, playlist):
     """Using `you-get` to download resources concurrently."""
     if file:
         urls = file
     with futures.ThreadPoolExecutor() as executor:
-        future_to_url = {executor.submit(download_url, url, output_dir): url for url in urls}
+        future_to_url = {executor.submit(download_url, url, output_dir, playlist): url for url in urls}
         for future in futures.as_completed(future_to_url):
             url = future_to_url[future]
             try:
