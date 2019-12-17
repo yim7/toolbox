@@ -1,0 +1,1 @@
+_TOOLBOX_COMPLETE=source_zsh toolbox > toolbox-complete.sh
