@@ -1,2 +1,4 @@
 .vscode
 *.txt
+poetry.lock
+toolbox.egg-info
